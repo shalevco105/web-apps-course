@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import postRoute from './src/routes/postRoute';
 import commentsRouter from "./src/routes/commentsRouter";
 import usersRouter from "./src/routes/usersRouter";
+import { authenticateToken } from './src/middlewares/auth';
 
 const app = express();
 
@@ -15,8 +16,12 @@ app.use("/comments", commentsRouter);
 
 app.use("/user", usersRouter);
 
+app.get('/user/protected', authenticateToken, (req, res) => {
+  res.status(200).json({ message: 'Protected data' });
+});
+
 mongoose
-  .connect('mongodb://localhost:27017/course')
+  .connect(process.env.MONGO_URI!)
   .then(() => console.log('MongoDB connected'))
   .catch((err: Error) => console.log(err));
 
