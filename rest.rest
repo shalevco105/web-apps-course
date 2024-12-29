@@ -42,3 +42,23 @@ Content-Type: application/json
 PUT http://localhost:3000/comments/<comment_id>
 Content-Type: application/json
 
+### Get All Users
+GET http://localhost:3000/user/data
+
+### Get User By Id
+GET http://localhost:3000/user/<user_id>
+
+### Create a User
+POST http://localhost:3000/user
+Content-Type: application/json
+{
+"password": "romhagever696969", "email": "rom12345@gmail.com", "username": "romrom123"
+}
+### Update a User
+PUT http://localhost:3000/user/<user_id>
+Content-Type: application/json
+
+### Delete a User
+DELETE http://localhost:3000/user/<user_id>
+Content-Type: application/json
+
