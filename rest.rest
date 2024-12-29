@@ -20,3 +20,25 @@ GET http://localhost:3000/post?sender=<sender_id>
 ### Update a Post
 PUT http://localhost:3000/post/<post_id>
 Content-Type: application/json
+
+### Get All Comments
+GET http://localhost:3000/comments/data
+
+### Get Comment By Id
+GET http://localhost:3000/comments/<comment_id>
+
+### Get comments by post_id
+GET http://localhost:3000/comments?post_id=<post_id>
+
+
+### Create a comment
+POST http://localhost:3000/comments
+Content-Type: application/json
+{
+"message": "Hello", "sender_id": "123456", "post_id": "223344"
+}
+
+### Update a comment
+PUT http://localhost:3000/comments/<comment_id>
+Content-Type: application/json
+

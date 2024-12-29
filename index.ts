@@ -2,12 +2,15 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import postRoute from './src/routes/postRoute';
+import commentsRouter from "./src/routes/commentsRouter";
 
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use("/post", postRoute);
+
+app.use("/comments", commentsRouter);
 
 mongoose
   .connect('mongodb://localhost:27017/course')
