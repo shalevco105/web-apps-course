@@ -74,6 +74,7 @@ export const updateComment = async (req: Request, res: Response): Promise<void> 
             res.status(201).send(updatedComment);
         } else {
             res.status(404).send('Comment not found');
+            return
         }
     } catch (error) {
         res.status(400).send((error as Error).message);

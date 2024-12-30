@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { addPost, getAllPosts, getPostById, getPostsBySender, updatePost } from '../controllers/postController';
+import { authenticateToken } from '../middlewares/auth';
 
-const router: Router = Router();
+const postRouter: Router = Router();
+postRouter.use(authenticateToken);
 
-router.post('/', addPost);
-router.get('/data', getAllPosts);
-router.get('/:post_id', getPostById);
-router.get('/', getPostsBySender);
-router.put('/:post_id', updatePost);
+postRouter.post('/', addPost);
+postRouter.get('/data', getAllPosts);
+postRouter.get('/:post_id', getPostById);
+postRouter.get('/', getPostsBySender);
+postRouter.put('/:post_id', updatePost);
 
-export default router;
+export default postRouter;
