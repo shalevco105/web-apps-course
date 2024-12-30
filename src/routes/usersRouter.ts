@@ -5,19 +5,17 @@ import {
     createUser,
     updateUser,
     deleteUser,
-    registerUser,
-    loginUser,
     logoutUser,
 } from '../controllers/usersController';
+import { authenticateToken } from '../middlewares/auth';
 
 const usersRouter = express.Router();
+usersRouter.use(authenticateToken);
 
 usersRouter.get('/data', getAllUsers);
 usersRouter.get('/:user_id', getUserById);
 usersRouter.post('/', createUser);
 usersRouter.put('/:user_id', updateUser);
 usersRouter.delete('/:user_id', deleteUser);
-usersRouter.post('/register', registerUser);
-usersRouter.post('/login', loginUser);
 usersRouter.post('/logout', logoutUser);
 export default usersRouter;

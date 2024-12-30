@@ -4,9 +4,15 @@ import bodyParser from 'body-parser';
 import postRoute from './src/routes/postRoute';
 import commentsRouter from "./src/routes/commentsRouter";
 import usersRouter from "./src/routes/usersRouter";
-import { authenticateToken } from './src/middlewares/auth';
+import cors from 'cors';
+
+import dotenv from 'dotenv';
+import authRouter from './src/routes/authRouter';
+dotenv.config();
 
 const app = express();
+app.use(express.json());
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -16,9 +22,7 @@ app.use("/comments", commentsRouter);
 
 app.use("/user", usersRouter);
 
-app.get('/user/protected', authenticateToken, (req, res) => {
-  res.status(200).json({ message: 'Protected data' });
-});
+app.use("/auth", authRouter);
 
 mongoose
   .connect(process.env.MONGO_URI!)
