@@ -29,7 +29,7 @@ if (process.env.NODE_ENV == "development") {
             },
             servers: [{ url: "http://localhost:3000" }],
         },
-        apis: ["src/api/routes/*.ts"],
+        apis: ["src/routes/*.ts"],
     };
     const specs = swaggerJsDoc(options);
     app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
