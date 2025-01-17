@@ -29,7 +29,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
         setTokenCookie(res, 'refreshToken', refreshToken);
         setTokenCookie(res, 'accessToken', accessToken);
-        res.status(201).json('You have successfully registered');
+        res.status(201).json(newUser);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -60,7 +60,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
         setTokenCookie(res, 'refreshToken', refreshToken);
         setTokenCookie(res, 'accessToken', accessToken);
-        res.status(201).json('You have successfully logined');
+        res.status(201).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
