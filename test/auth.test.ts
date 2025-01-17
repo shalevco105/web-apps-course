@@ -1,151 +1,138 @@
+import { UserModel } from './../src/models/userModel';
+import { app } from './../index';
+import { userMock1, userMock2 } from './../src/__mocks__/user.mock';
 import supertest from 'supertest';
 import mongoose from 'mongoose';
-import { UserModel } from "../src/models/userModel";
-import { userMock1, userMock2 } from "../src/__mocks__/user.mock";
-import { Application } from "express";
-import appPromise from "../index";
 
-let app: Application;
-
-describe('/auth - Authentication Controller Tests', () => {
+describe('/auth - Auth Controller', () => {
     let refreshToken: string;
 
     beforeAll(async () => {
-        console.log("🚀 Starting test suite setup...");
-        app = await appPromise;
         await UserModel.deleteMany();
-        console.log("✅ Test suite setup complete.");
     });
 
     afterAll(async () => {
-        console.log("🧹 Cleaning up after tests...");
         await UserModel.deleteMany();
         await mongoose.connection.close();
-        console.log("✅ Cleanup complete. Closing database connection.");
     });
 
-    describe('POST /auth/register - Register Tests', () => {
-        const route = '/auth/register';
-
-        it('✅ Should successfully register a new user', async () => {
-            const response = await supertest(app).post(route).send(userMock1);
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty('_id');
-            console.log("User registration test passed.");
+    describe('POST /auth/register', () => {
+        const registerRoute = '/auth/register';
+        it('should register a new user', async () => {
+            const response = await supertest(app).post(registerRoute).send(userMock1);
+            expect(response.status).toBe(201);
         });
 
-        it('❌ Should fail registration with an existing username', async () => {
-            const response = await supertest(app).post(route).send(userMock1);
+        it('should fail to register with existing username', async () => {
+            const response = await supertest(app).post(registerRoute).send(userMock1);
             expect(response.status).toBe(400);
-            console.log("Duplicate username test passed.");
         });
 
-        it('❌ Should fail registration with missing fields', async () => {
-            const response = await supertest(app).post(route).send({ username: userMock2 });
-            expect(response.status).toBe(400);
-            console.log("Validation error test passed.");
+        it('should fail to register with missing fields', async () => {
+            const response = await supertest(app).post(registerRoute).send({ username: userMock2 });
+            expect(response.status).toBe(500);
         });
     });
 
-    describe('POST /auth/login - Login Tests', () => {
-        const route = '/auth/login';
+    describe('POST /auth/login', () => {
+        const loginRoute = '/auth/login';
 
-        it('✅ Should successfully log in an existing user', async () => {
-            const response = await supertest(app).post(route).send(userMock1);
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty('accessToken');
-            expect(response.body).toHaveProperty('refreshToken');
-            refreshToken = response.body.refreshToken;
-            console.log("Login successful.");
+        it('should login an existing user', async () => {
+            const response = await supertest(app).post(loginRoute).send(userMock1);
+            expect(response.status).toBe(201);
+            const cookie = response.headers['set-cookie'];
+            expect(cookie).toBeDefined();
+            expect(cookie[0]).toContain('refreshToken');
+            expect(cookie[1]).toContain('accessToken');
+
+            refreshToken = cookie[0].split(';')[0].split('=')[1];;
+
         });
 
-        it('❌ Should fail login with a non-existing username', async () => {
-            const response = await supertest(app).post(route).send(userMock2);
+        it('should fail to login with non existing username', async () => {
+            const response = await supertest(app).post(loginRoute).send(userMock2);
             expect(response.status).toBe(400);
-            console.log("Non-existing username test passed.");
         });
 
-        it('❌ Should fail login with an incorrect password', async () => {
-            const response = await supertest(app).post(route).send({
-                ...userMock1,
-                password: 'wrong_password',
-            });
+        it('should fail to login with wrong password ', async () => {
+            const response = await supertest(app)
+                .post(loginRoute)
+                .send({ ...userMock1, password: 'pass' });
             expect(response.status).toBe(400);
-            console.log("Incorrect password test passed.");
         });
 
-        it('❌ Should handle internal server error gracefully', async () => {
+        it('should return error and send status 401', async () => {
             jest.spyOn(UserModel, 'findOne').mockImplementationOnce(() => {
-                throw new Error('Simulated Error');
+                throw new Error('Fake Error');
             });
 
-            const response = await supertest(app).post(route).send(userMock1);
-            expect(response.status).toBe(400);
-            console.log("Error handling test passed.");
+            const response = await supertest(app).post(loginRoute).send(
+                {
+                    username: 'username',
+                    email: 'example@gmail.com',
+                }
+            );
+            expect(response.status).toBe(401);
         });
     });
 
-    describe('POST /auth/refresh - Refresh Token Tests', () => {
-        const route = '/auth/refresh';
-
-        it('✅ Should refresh tokens successfully', async () => {
-            const response = await supertest(app).post(route).send({ refreshToken });
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty('accessToken');
-            expect(response.body).toHaveProperty('refreshToken');
-            refreshToken = response.body.refreshToken;
-            console.log("Token refresh successful.");
+    describe('POST /refresh', () => {
+        const refreshRoute = '/auth/refresh';
+        it('should refresh tokens', async () => {
+            const response = await supertest(app).post(refreshRoute).send({ refreshToken });
+            expect(response.status).toBe(201);
+            const cookie = response.headers['set-cookie'];
+            expect(cookie).toBeDefined();
+            expect(cookie[0]).toContain('refreshToken');
+            expect(cookie[1]).toContain('accessToken');
+            refreshToken = cookie[0].split(';')[0].split('=')[1];;
         });
 
-        it('❌ Should fail token refresh with an invalid token', async () => {
-            const response = await supertest(app).post(route).send({ refreshToken: 'invalid_token' });
-            expect(response.status).toBe(400);
-            console.log("Invalid token test passed.");
+        it('should fail to refresh with invalid token', async () => {
+            const response = await supertest(app).post(refreshRoute).send({
+                refreshToken: 'invalidtoken',
+            });
+            expect(response.status).toBe(403);
         });
     });
 
-    describe('POST /auth/logout - Logout Tests', () => {
-        const route = '/auth/logout';
-
-        it('✅ Should successfully log out the user', async () => {
-            const response = await supertest(app).post(route).send({ refreshToken });
-            expect(response.status).toBe(200);
-            console.log("Logout successful.");
+    describe('POST /user/logout', () => {
+        const logoutRoute = '/user/logout';
+        it('should logout the user', async () => {
+            const response = await supertest(app).post(logoutRoute).send({ refreshToken });
+            expect(response.status).toBe(201);
         });
 
-        it('❌ Should fail logout with the same token twice', async () => {
-            const response = await supertest(app).post(route).send({ refreshToken });
-            expect(response.status).toBe(400);
-            console.log("Duplicate logout test passed.");
+        it('should fail to logout the user with the same token twice', async () => {
+            const response = await supertest(app).post(logoutRoute).send({ refreshToken });
+            expect(response.status).toBe(401);
         });
 
-        it('❌ Should fail logout with an invalid token', async () => {
-            const response = await supertest(app).post(route).send({ refreshToken: 'invalid_token' });
-            expect(response.status).toBe(400);
-            console.log("Invalid token logout test passed.");
+        it('should fail to logout with invalid token', async () => {
+            const response = await supertest(app).post(logoutRoute).send({
+                refreshToken: 'invalidtoken',
+            });
+            expect(response.status).toBe(401);
         });
 
-        it('❌ Should fail logout without providing a token', async () => {
-            const response = await supertest(app).post(route).send();
-            expect(response.status).toBe(400);
-            console.log("Missing token logout test passed.");
+        it('should fail to logout without token', async () => {
+            const response = await supertest(app).post(logoutRoute).send();
+            expect(response.status).toBe(401);
         });
 
-        it('❌ Should fail logout for a deleted user', async () => {
+        it('should fail to logout a deleted user', async () => {
             await UserModel.deleteMany();
-            const response = await supertest(app).post(route).send({ refreshToken });
-            expect(response.status).toBe(400);
-            console.log("Deleted user logout test passed.");
+            const response = await supertest(app).post(logoutRoute).send({ refreshToken });
+            expect(response.status).toBe(401);
         });
 
-        it('❌ Should handle internal server error during logout', async () => {
+        it('should return error and send status 401', async () => {
             jest.spyOn(UserModel, 'findOne').mockImplementationOnce(() => {
-                throw new Error('Simulated Error');
+                throw new Error('Fake Error');
             });
 
-            const response = await supertest(app).post(route).send({ refreshToken });
-            expect(response.status).toBe(400);
-            console.log("Logout error handling test passed.");
+            const response = await supertest(app).post(logoutRoute).send({ refreshToken });
+            expect(response.status).toBe(401);
         });
     });
 });
