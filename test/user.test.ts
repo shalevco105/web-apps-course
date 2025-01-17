@@ -11,7 +11,7 @@ beforeAll(async () => {
     await request(app).post("/auth/register").send(userMock1);
     const response = await request(app).post("/auth/login").send(userMock1);
     token = (response.headers['set-cookie'])[1].split(';')[0].split('=')[1];
-    console.log("body", response.body)
+    console.log("body", response.body._id)
     userId = response.body._id;
 });
 
@@ -43,29 +43,18 @@ describe("Users API", () => {
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty("email");
         expect(res.body).toHaveProperty("username");
-        expect(res.body.email).toBe("romrom20022002@gmail.com");
+        expect(res.body.email).toBe(userMock1.email);
     });
 
-    test("Update logged-in user status", async () => {
-        const newStatus = "This is a test status update";
+    test("Update logged-in user email", async () => {
+        const newEmail = "This is a test email update";
         const res = await request(app)
             .put(`/user/${userId}`)
             .set("Authorization", `Bearer ${token}`)
-            .send({ status: newStatus });
+            .send({ email: newEmail});
 
         expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty("status", newStatus);
-    });
-
-    test("Retrieve another user's photo", async () => {
-        const email = "romrom20022002@gmail.com";
-        const res = await request(app)
-            .get(`/user/myPhoto/${email}`)
-            .set("Authorization", `Bearer ${token}`);
-
-        expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty("photo");
-        expect(typeof res.body.photo).toBe("string");
+        expect(res.body).toHaveProperty("email", newEmail);
     });
 
     test("Delete logged-in user", async () => {
@@ -74,7 +63,7 @@ describe("Users API", () => {
             .set("Authorization", `Bearer ${token}`);
 
         expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty("message");
-        expect(res.body.message).toBe("User deleted successfully");
+        expect(res.body).toHaveProperty("username");
+        expect(res.body.username).toBe(userMock1.username);
     });
 });

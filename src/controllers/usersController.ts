@@ -12,7 +12,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const getUserById = async (req: Request, res: Response) => {
     try {
-        const user = await UserModel.findById(req.user?.id);
+        const user = await UserModel.findById(req.user?.userId);
         user ? res.status(200).json(user) : res.status(404).send('User not found');
     } catch (error) {
         res.status(500).send(error.message);
@@ -32,7 +32,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const updatedUser = await UserModel.findByIdAndUpdate(
-            req.user?.id,
+            req.user?.userId,
             req.body,
             { new: true, runValidators: true }
         );
@@ -46,7 +46,8 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
     try {
-        const deletedUser = await UserModel.findByIdAndDelete(req.user?.id);
+        const deletedUser = await UserModel.findByIdAndDelete(req.user?.userId);
+        console.log("deletedUser", deletedUser)
         deletedUser
             ? res.status(200).json(deletedUser)
             : res.status(404).send('User not found');
