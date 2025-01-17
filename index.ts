@@ -1,13 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import swaggerUI from "swagger-ui-express"
-import swaggerJsDoc from "swagger-jsdoc"
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 import bodyParser from 'body-parser';
 import postRoute from './src/routes/postRoute';
 import commentsRouter from "./src/routes/commentsRouter";
 import usersRouter from "./src/routes/usersRouter";
 import cors from 'cors';
-
 import dotenv from 'dotenv';
 import authRouter from './src/routes/authRouter';
 dotenv.config();
@@ -15,7 +14,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
-
 app.use(bodyParser.json());
 
 if (process.env.NODE_ENV == "development") {
@@ -35,13 +33,9 @@ if (process.env.NODE_ENV == "development") {
     app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 }
 
-
 app.use("/post", postRoute);
-
 app.use("/comments", commentsRouter);
-
 app.use("/user", usersRouter);
-
 app.use("/auth", authRouter);
 
 mongoose
@@ -50,3 +44,6 @@ mongoose
   .catch((err: Error) => console.log(err));
 
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+
+const appPromise = new Promise<typeof app>((resolve) => resolve(app));
+export default appPromise;

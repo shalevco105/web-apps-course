@@ -1,0 +1,14 @@
+[
+  {
+    "username": "username",
+    "email": "example@gmail.com",
+    "password": "password",
+    "refreshToken": "refresh_token_123"
+  },
+  {
+    "username": "username2",
+    "email": "example2@gmail.com",
+    "password": "password2",
+    "refreshToken": null
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Test Post",
+    "content": "This is the content of the test post",
+    "senderId": "user123"
+  },
+  {
+    "title": "Another Test Post",
+    "content": "More content for another test post",
+    "sender_id": "user789"
+  }
+]
