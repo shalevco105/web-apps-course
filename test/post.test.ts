@@ -19,8 +19,7 @@ describe('/post - Post Controller', () => {
     beforeAll(async () => {
         await request(app).post("/auth/register").send(userMock1);
         const response = await request(app).post("/auth/login").send(userMock1);
-        token = (response.headers['set-cookie'])[0].split(';')[0].split('=')[1];
-        console.log("token", token);
+        token = (response.headers['set-cookie'])[1].split(';')[0].split('=')[1];
         await Post.deleteMany();
     });
 

@@ -13,10 +13,10 @@ usersRouter.use(authenticateToken);
 
 /**
  * @swagger
- * /users/data:
+ * /user/data:
  *   get:
  *     summary: Retrieve a list of all users
- *     tags: [Users]
+ *     tags: [User]
  *     responses:
  *       200:
  *         description: List of users retrieved successfully.
@@ -33,10 +33,10 @@ usersRouter.get('/data', getAllUsers);
 
 /**
  * @swagger
- * /users/{user_id}:
+ * /user/{user_id}:
  *   get:
  *     summary: Retrieve a user by ID
- *     tags: [Users]
+ *     tags: [User]
  *     parameters:
  *       - in: path
  *         name: user_id
@@ -60,10 +60,10 @@ usersRouter.get('/:user_id', getUserById);
 
 /**
  * @swagger
- * /users:
+ * /user:
  *   post:
  *     summary: Create a new user
- *     tags: [Users]
+ *     tags: [User]
  *     requestBody:
  *       required: true
  *       content:
@@ -91,10 +91,10 @@ usersRouter.post('/', createUser);
 
 /**
  * @swagger
- * /users/{user_id}:
+ * /user/{user_id}:
  *   put:
  *     summary: Update a user by ID
- *     tags: [Users]
+ *     tags: [User]
  *     parameters:
  *       - in: path
  *         name: user_id
@@ -121,10 +121,10 @@ usersRouter.put('/:user_id', updateUser);
 
 /**
  * @swagger
- * /users/{user_id}:
+ * /user/{user_id}:
  *   delete:
  *     summary: Delete a user by ID
- *     tags: [Users]
+ *     tags: [User]
  *     parameters:
  *       - in: path
  *         name: user_id
