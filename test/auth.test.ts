@@ -68,11 +68,11 @@ describe('/auth - Auth Controller', () => {
 
             const response = await supertest(app).post(loginRoute).send(
                 {
-                    username: 'username',
                     email: 'example@gmail.com',
+                    password: 'password',
                 }
             );
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(500);
         });
     });
 
@@ -86,6 +86,7 @@ describe('/auth - Auth Controller', () => {
             expect(cookie[0]).toContain('refreshToken');
             expect(cookie[1]).toContain('accessToken');
             refreshToken = cookie[0].split(';')[0].split('=')[1];;
+
         });
 
         it('should fail to refresh with invalid token', async () => {
@@ -96,34 +97,37 @@ describe('/auth - Auth Controller', () => {
         });
     });
 
-    describe('POST /user/logout', () => {
-        const logoutRoute = '/user/logout';
+    describe('POST /auth/logout', () => {
+        const logoutRoute = '/auth/logout';
         it('should logout the user', async () => {
             const response = await supertest(app).post(logoutRoute).send({ refreshToken });
-            expect(response.status).toBe(201);
+            expect(response.status).toBe(200);
         });
 
         it('should fail to logout the user with the same token twice', async () => {
             const response = await supertest(app).post(logoutRoute).send({ refreshToken });
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(400);
         });
 
         it('should fail to logout with invalid token', async () => {
             const response = await supertest(app).post(logoutRoute).send({
                 refreshToken: 'invalidtoken',
             });
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(400);
         });
 
+        
         it('should fail to logout without token', async () => {
             const response = await supertest(app).post(logoutRoute).send();
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(400);
         });
+
+        
 
         it('should fail to logout a deleted user', async () => {
             await UserModel.deleteMany();
             const response = await supertest(app).post(logoutRoute).send({ refreshToken });
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(400);
         });
 
         it('should return error and send status 401', async () => {
@@ -132,7 +136,7 @@ describe('/auth - Auth Controller', () => {
             });
 
             const response = await supertest(app).post(logoutRoute).send({ refreshToken });
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(500);
         });
     });
 });

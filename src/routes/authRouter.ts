@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, refreshAccessToken, registerUser } from '../controllers/authConroller';
+import { loginUser, logoutUser, refreshAccessToken, registerUser } from '../controllers/authConroller';
 
 const authRouter = express.Router();
 /**
@@ -124,4 +124,29 @@ authRouter.post('/login', loginUser);
  *         description: Internal server error
  */
 authRouter.post('/refresh', refreshAccessToken);
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User logged out successfully.
+ *       400:
+ *         description: Invalid token.
+ *       500:
+ *         description: Server error.
+ */
+authRouter.post('/logout', logoutUser);
 export default authRouter;

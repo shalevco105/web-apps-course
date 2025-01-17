@@ -54,22 +54,3 @@ export const deleteUser = async (req: Request, res: Response) => {
         res.status(500).send(error.message);
     }
 };
-
-export const logoutUser = async (req: Request, res: Response) => {
-    try {
-        const { refreshToken } = req.body;
-
-        const user = await UserModel.findOne({ refreshToken });
-        if (!user) {
-            res.status(400).json({ message: 'Invalid token' });
-            return
-        }
-
-        user.refreshToken = null;
-        await user.save();
-
-        res.status(200).json({ message: 'Logged out successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};

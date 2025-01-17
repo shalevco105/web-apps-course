@@ -5,7 +5,6 @@ import {
     createUser,
     updateUser,
     deleteUser,
-    logoutUser,
 } from '../controllers/usersController';
 import { authenticateToken } from '../middlewares/authMiddleware';
 
@@ -142,30 +141,5 @@ usersRouter.put('/:user_id', updateUser);
  *         description: Server error.
  */
 usersRouter.delete('/:user_id', deleteUser);
-
-/**
- * @swagger
- * /users/logout:
- *   post:
- *     summary: Logout a user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               refreshToken:
- *                 type: string
- *     responses:
- *       200:
- *         description: User logged out successfully.
- *       400:
- *         description: Invalid token.
- *       500:
- *         description: Server error.
- */
-usersRouter.post('/logout', logoutUser);
 
 export default usersRouter;
