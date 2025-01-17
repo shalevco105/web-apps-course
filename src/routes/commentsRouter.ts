@@ -6,7 +6,7 @@ import {
     getCommetnsByPostId,
     updateComment,
 } from '../controllers/commentsController';
-import { authenticateToken } from '../middlewares/auth';
+import { authenticateToken } from '../middlewares/authMiddleware';
 
 const commentsRouter = express.Router();
 commentsRouter.use(authenticateToken);

@@ -6,6 +6,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     if (!token) {
         res.status(401).json({ message: 'Access token required' });
+        return;
     }
 
     try {

@@ -6,7 +6,7 @@ import {
     getPostsBySender,
     updatePost,
 } from '../controllers/postController';
-import { authenticateToken } from '../middlewares/auth';
+import { authenticateToken } from '../middlewares/authMiddleware';
 
 const postRouter: Router = Router();
 postRouter.use(authenticateToken);

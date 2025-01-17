@@ -12,7 +12,7 @@ beforeAll(async () => {
         .post("/api/auth/login")
         .send({
             user: {
-                email: "vardiroy4@gmail.com",
+                email: "romrom20022002@gmail.com",
                 password: "abc123",
             },
         });

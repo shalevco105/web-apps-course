@@ -23,7 +23,7 @@ beforeAll(async () => {
             `Failed to log in: ${loginResponse.body.message || "Unknown error"}`
         );
     }
-
+    console.log("token", loginResponse.body.accessToken);
     token = loginResponse.body.accessToken;
 });
 
