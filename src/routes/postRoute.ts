@@ -14,16 +14,16 @@ postRouter.use(authenticateToken);
 /**
  * @swagger
  * tags:
- *   name: Posts
- *   description: API for managing posts
+ *   name: Post
+ *   description: API for managing post
  */
 
 /**
  * @swagger
- * /posts:
+ * /post:
  *   post:
  *     summary: Add a new post
- *     tags: [Posts]
+ *     tags: [Post]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -53,15 +53,15 @@ postRouter.post('/', addPost);
 
 /**
  * @swagger
- * /posts/data:
+ * /post/data:
  *   get:
- *     summary: Get all posts
- *     tags: [Posts]
+ *     summary: Get all post
+ *     tags: [Post]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of all posts
+ *         description: List of all post
  *       500:
  *         description: Server error
  */
@@ -69,10 +69,10 @@ postRouter.get('/data', getAllPosts);
 
 /**
  * @swagger
- * /posts/{post_id}:
+ * /post/{post_id}:
  *   get:
  *     summary: Get a post by ID
- *     tags: [Posts]
+ *     tags: [Post]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -94,10 +94,10 @@ postRouter.get('/:post_id', getPostById);
 
 /**
  * @swagger
- * /posts:
+ * /post:
  *   get:
- *     summary: Get posts by sender
- *     tags: [Posts]
+ *     summary: Get post by sender
+ *     tags: [Post]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -106,10 +106,10 @@ postRouter.get('/:post_id', getPostById);
  *         schema:
  *           type: string
  *         required: true
- *         description: Sender ID to filter posts
+ *         description: Sender ID to filter post
  *     responses:
  *       200:
- *         description: List of posts by sender
+ *         description: List of post by sender
  *       500:
  *         description: Server error
  */
@@ -117,10 +117,10 @@ postRouter.get('/', getPostsBySender);
 
 /**
  * @swagger
- * /posts/{post_id}:
+ * /post/{post_id}:
  *   put:
  *     summary: Update a post
- *     tags: [Posts]
+ *     tags: [Post]
  *     security:
  *       - bearerAuth: []
  *     parameters:

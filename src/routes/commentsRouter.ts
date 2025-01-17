@@ -3,7 +3,7 @@ import {
     createComment,
     getAllComments,
     getCommentById,
-    getCommetnsByPostId,
+    getCommentsByPostId,
     updateComment,
 } from '../controllers/commentsController';
 import { authenticateToken } from '../middlewares/authMiddleware';
@@ -98,7 +98,7 @@ commentsRouter.get('/:comment_id', getCommentById);
  *       500:
  *         description: Server error.
  */
-commentsRouter.get('/', getCommetnsByPostId);
+commentsRouter.get('/', getCommentsByPostId);
 
 /**
  * @swagger

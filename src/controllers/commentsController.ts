@@ -29,7 +29,7 @@ export const getCommentById = async (req: Request, res: Response): Promise<void>
 };
 
 // Get comments by post ID
-export const getCommetnsByPostId = async (req: Request, res: Response): Promise<void> => {
+export const getCommentsByPostId = async (req: Request, res: Response): Promise<void> => {
     try {
         const postId = req.query.post_id as string;
 

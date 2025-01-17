@@ -1,5 +1,5 @@
 import { UserModel } from './../src/models/userModel';
-import { app } from './../index';
+import { app } from '../index';
 import { userMock1, userMock2 } from './../src/__mocks__/user.mock';
 import supertest from 'supertest';
 import mongoose from 'mongoose';

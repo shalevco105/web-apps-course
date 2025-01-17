@@ -4,6 +4,7 @@ import Post from "../src/models/postModel";
 import {app} from "../index";
 import request from "supertest";
 import {userMock1} from "../src/__mocks__/user.mock";
+import {UserModel} from "../src/models/userModel";
 
 const mockPost = {
     title: 'Test Post',
@@ -11,32 +12,28 @@ const mockPost = {
     sender_id: new Types.ObjectId().toString(),
 };
 
-describe('/posts - Posts Controller', () => {
+describe('/post - Post Controller', () => {
     let token: string;
     let postId: string;
 
-    //     const response = await request(app).post("/api/auth/login").send(userMock1);
-    //     expect(response.status).toBe(201);
-    //     const cookie = response.headers['set-cookie'];
-    //     expect(cookie).toBeDefined();
-    //     expect(cookie[0]).toContain('refreshToken');
-    //     expect(cookie[1]).toContain('accessToken');
-    //     token = cookie[0].split(';')[0].split('=')[1];
-
     beforeAll(async () => {
-        token = 'token'; //TODO: fix token
+        await request(app).post("/auth/register").send(userMock1);
+        const response = await request(app).post("/auth/login").send(userMock1);
+        token = (response.headers['set-cookie'])[0].split(';')[0].split('=')[1];
+        console.log("token", token);
         await Post.deleteMany();
     });
 
     afterAll(async () => {
         await Post.deleteMany();
+        await UserModel.deleteMany();
         await mongoose.connection.close();
     });
 
-    describe('POST /posts', () => {
+    describe('POST /post', () => {
         it('should create a new post', async () => {
             const response = await supertest(app)
-                .post('/posts')
+                .post('/post')
                 .set('Authorization', `Bearer ${token}`)
                 .send(mockPost);
             expect(response.status).toBe(201);
@@ -46,23 +43,23 @@ describe('/posts - Posts Controller', () => {
         });
 
         it('should fail to create a post without authorization', async () => {
-            const response = await supertest(app).post('/posts').send(mockPost);
-            expect(response.status).toBe(404);
+            const response = await supertest(app).post('/post').send(mockPost);
+            expect(response.status).toBe(401);
         });
 
         it('should fail to create a post with missing fields', async () => {
             const response = await supertest(app)
-                .post('/posts')
+                .post('/post')
                 .set('Authorization', `Bearer ${token}`)
                 .send({});
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
         });
     });
 
-    describe('GET /posts/data', () => {
-        it('should retrieve all posts', async () => {
+    describe('GET /post/data', () => {
+        it('should retrieve all post', async () => {
             const response = await supertest(app)
-                .get('/posts/data')
+                .get('/post/data')
                 .set('Authorization', `Bearer ${token}`);
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Array);
@@ -70,10 +67,10 @@ describe('/posts - Posts Controller', () => {
         });
     });
 
-    describe('GET /posts/:post_id', () => {
+    describe('GET /post/:post_id', () => {
         it('should retrieve a single post by ID', async () => {
             const response = await supertest(app)
-                .get(`/posts/${postId}`)
+                .get(`/post/${postId}`)
                 .set('Authorization', `Bearer ${token}`);
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('_id', postId);
@@ -82,16 +79,16 @@ describe('/posts - Posts Controller', () => {
         it('should return 404 for a non-existing post ID', async () => {
             const fakeId = new Types.ObjectId().toString();
             const response = await supertest(app)
-                .get(`/posts/${fakeId}`)
+                .get(`/post/${fakeId}`)
                 .set('Authorization', `Bearer ${token}`);
             expect(response.status).toBe(404);
         });
     });
 
-    describe('GET /posts?sender=<sender_id>', () => {
-        it('should retrieve posts by sender ID', async () => {
+    describe('GET /post?sender=<sender_id>', () => {
+        it('should retrieve post by sender ID', async () => {
             const response = await supertest(app)
-                .get(`/posts?sender=${mockPost.sender_id}`)
+                .get(`/post?sender=${mockPost.sender_id}`)
                 .set('Authorization', `Bearer ${token}`);
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Array);
@@ -99,11 +96,11 @@ describe('/posts - Posts Controller', () => {
         });
     });
 
-    describe('PUT /posts/:post_id', () => {
+    describe('PUT /post/:post_id', () => {
         it('should update a post', async () => {
             const updatedData = { title: 'Updated Title' };
             const response = await supertest(app)
-                .put(`/posts/${postId}`)
+                .put(`/post/${postId}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(updatedData);
             expect(response.status).toBe(200);
@@ -113,7 +110,7 @@ describe('/posts - Posts Controller', () => {
         it('should return 404 for updating a non-existing post', async () => {
             const fakeId = new Types.ObjectId().toString();
             const response = await supertest(app)
-                .put(`/posts/${fakeId}`)
+                .put(`/post/${fakeId}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ title: 'Should not update' });
             expect(response.status).toBe(404);
