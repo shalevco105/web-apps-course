@@ -19,7 +19,6 @@ describe('/comment - Comment Controller', () => {
     beforeAll(async () => {
         await request(app).post("/auth/register").send(userMock1);
         const response = await request(app).post("/auth/login").send(userMock1);
-        
         token = (response.headers['set-cookie'])[1].split(';')[0].split('=')[1];
         await Comment.deleteMany();
     });
@@ -82,6 +81,17 @@ describe('/comment - Comment Controller', () => {
                 .get(`/comments/${fakeId}`)
                 .set('Authorization', `Bearer ${token}`);
             expect(response.status).toBe(404);
+        });
+    });
+
+    describe('GET /comments?post_id=<post_id>', () => {
+        it('should retrieve post by post ID', async () => {
+            const response = await supertest(app)
+                .get(`/comments?post_id=${mockComment.post_id}`)
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+            expect(response.body[0]).toHaveProperty('post_id', mockComment.post_id);
         });
     });
 
