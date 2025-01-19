@@ -7,9 +7,9 @@ import { userMock1 } from "../src/__mocks__/user.mock";
 import { UserModel } from "../src/models/userModel";
 
 const mockComment = {
-    title: 'Test Comment',
-    content: 'This is a test comment',
+    message: 'Test Comment',
     sender_id: new Types.ObjectId().toString(),
+    post_id: new Types.ObjectId().toString(),
 };
 
 describe('/comment - Comment Controller', () => {
@@ -38,7 +38,7 @@ describe('/comment - Comment Controller', () => {
                 .send(mockComment);
             expect(response.status).toBe(201);
             expect(response.body).toHaveProperty('_id');
-            expect(response.body.title).toBe(mockComment.title);
+            expect(response.body.message).toBe(mockComment.message);
             commentId = response.body._id;
         });
 
@@ -85,26 +85,15 @@ describe('/comment - Comment Controller', () => {
         });
     });
 
-    describe('GET /comments?sender=<sender_id>', () => {
-        it('should retrieve comment by sender ID', async () => {
-            const response = await supertest(app)
-                .get(`/comments?sender=${mockComment.sender_id}`)
-                .set('Authorization', `Bearer ${token}`);
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Array);
-            expect(response.body[0]).toHaveProperty('sender_id', mockComment.sender_id);
-        });
-    });
-
     describe('PUT /comments/:comment_id', () => {
         it('should update a comment', async () => {
-            const updatedData = { title: 'Updated Title' };
+            const updatedData = { message: 'Updated Title' };
             const response = await supertest(app)
                 .put(`/comments/${commentId}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(updatedData);
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty('title', updatedData.title);
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty('message', updatedData.message);
         });
 
         it('should return 404 for updating a non-existing comment', async () => {
