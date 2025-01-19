@@ -29,9 +29,9 @@ export const registerUser = async (req: Request, res: Response) => {
 
         setTokenCookie(res, 'refreshToken', refreshToken);
         setTokenCookie(res, 'accessToken', accessToken);
-        res.status(201).json('You have successfully registered');
+        res.status(201).json(newUser);
     } catch (error) {
-        console.error(error); 
+        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
@@ -60,14 +60,14 @@ export const loginUser = async (req: Request, res: Response) => {
 
         setTokenCookie(res, 'refreshToken', refreshToken);
         setTokenCookie(res, 'accessToken', accessToken);
-        res.status(201).json('You have successfully logined');
+        res.status(201).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
-    const { refreshToken } = req.body; 
+    const { refreshToken } = req.body;
 
     if (!refreshToken) {
         res.status(401).json({ message: 'Refresh token is required' });
@@ -75,7 +75,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
     }
 
     try {
-        const decoded = verifyRefreshToken(refreshToken); 
+        const decoded = verifyRefreshToken(refreshToken);
         const user = await UserModel.findById(decoded.userId);
 
         if (!user) {
@@ -84,10 +84,37 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
         }
 
         const newAccessToken = generateAccessToken(user._id.toString());
+        const newRefreshToken = generateRefreshToken(user._id.toString());
+
+        setTokenCookie(res, 'refreshToken', newRefreshToken);
         setTokenCookie(res, 'accessToken', newAccessToken);
         res.status(201).json('You have successfully refreshed your access token');
     } catch (error) {
         console.error(error);
         res.status(403).json({ message: 'Invalid or expired refresh token' });
+    }
+};
+
+export const logoutUser = async (req: Request, res: Response) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            res.status(400).json({ message: 'Missing token' });
+            return
+        }
+
+        const user = await UserModel.findOne({ refreshToken });
+        if (!user) {
+            res.status(400).json({ message: 'Invalid token' });
+            return
+        }
+
+        user.refreshToken = null;
+        await user.save();
+
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
