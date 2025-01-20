@@ -19,16 +19,6 @@ export const getUserById = async (req: Request, res: Response) => {
     }
 };
 
-export const createUser = async (req: Request, res: Response) => {
-    try {
-        const { username, email, password } = req.body;
-        const newUser = await UserModel.create({ username, email, password });
-        res.status(201).json(newUser);
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-};
-
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const updatedUser = await UserModel.findByIdAndUpdate(

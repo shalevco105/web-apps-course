@@ -2,7 +2,6 @@ import express from 'express';
 import {
     getAllUsers,
     getUserById,
-    createUser,
     updateUser,
     deleteUser,
 } from '../controllers/usersController';
@@ -89,37 +88,6 @@ usersRouter.get('/data', getAllUsers);
  *         description: Server error.
  */
 usersRouter.get('/:user_id', getUserById);
-
-/**
- * @swagger
- * /user:
- *   post:
- *     summary: Create a new user
- *     tags: [User]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       201:
- *         description: User created successfully.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Bad request.
- */
-usersRouter.post('/', createUser);
 
 /**
  * @swagger
