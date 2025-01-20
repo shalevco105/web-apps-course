@@ -20,6 +20,40 @@ commentsRouter.use(authenticateToken);
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Comment:
+ *       type: object
+ *       required:
+ *         - message
+ *         - sender_id
+ *         - post_id
+ *       properties:
+ *         message:
+ *           type: string
+ *           description: The content of the comment
+ *         sender_id:
+ *           type: string
+ *           description: The ID of the user who sent the comment
+ *         post_id:
+ *           type: string
+ *           description: The ID of the post the comment belongs to
+ *     CommentInput:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           description: The content of the comment
+ *         sender_id:
+ *           type: string
+ *           description: The ID of the user who sent the comment (optional)
+ *         post_id:
+ *           type: string
+ *           description: The ID of the post the comment belongs to
+ */
+
+/**
+ * @swagger
  * /comments/data:
  *   get:
  *     summary: Get all comments or filter by post ID
