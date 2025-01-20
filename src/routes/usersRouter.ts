@@ -13,6 +13,38 @@ usersRouter.use(authenticateToken);
 
 /**
  * @swagger
+ * tags:
+ *   name: User
+ *   description: User management API
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - username
+ *         - email
+ *         - password
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The username of the user
+ *         email:
+ *           type: string
+ *           description: The email of the user
+ *         password:
+ *           type: string
+ *           description: The password of the user
+ *         refreshToken:
+ *           type: string
+ *           description: The refresh token of the user (optional)
+ */
+
+/**
+ * @swagger
  * /user/data:
  *   get:
  *     summary: Retrieve a list of all users
